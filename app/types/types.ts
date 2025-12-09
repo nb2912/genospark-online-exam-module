@@ -1,3 +1,5 @@
+export type QuestionType = 'single' | 'multiple' | 'short' | 'dropdown' | 'truefalse';
+
 export interface Answer {
   id: string;
   text: string;
@@ -5,17 +7,9 @@ export interface Answer {
 
 export interface Question {
   id: number;
-  text: string;
-  answers: Answer[];
-  correctAnswer: string;
-  media?: {
-    type: 'image' | 'video';
-    src: string;
-  };
-}
-
-export interface Exam {
-  id: string;
+  type: QuestionType;
   title: string;
-  questions: Question[];
+  text: string;
+  image?: string;
+  answers?: Answer[];
 }

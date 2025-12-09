@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "type": "single",
+    "title": "Multiple Choice Item - Single Select",
+    "text": "What colour is the sky on a clear day?",
+    "image": "/images/sky.jpg",
+    "answers": [
+      { "id": "A", "text": "Blue" },
+      { "id": "B", "text": "Green" },
+      { "id": "C", "text": "Purple" },
+      { "id": "D", "text": "Yellow" }
+    ]
+  },
+  {
+    "id": 2,
+    "type": "multiple",
+    "title": "Multiple Choice Item - Multiple Select",
+    "text": "Which of these elements are considered metals? (Select three)",
+    "answers": [
+      { "id": "A", "text": "Gold" },
+      { "id": "B", "text": "Hydrogen" },
+      { "id": "C", "text": "Magnesium" },
+      { "id": "D", "text": "Potassium" },
+      { "id": "E", "text": "Xenon" }
+    ]
+  },
+  {
+    "id": 3,
+    "type": "short",
+    "title": "Short Response Item",
+    "text": "What is the sum of £10.00 and £3.00?"
+  },
+  {
+    "id": 4,
+    "type": "dropdown",
+    "title": "Dropdown Item",
+    "text": "Newton's Principia laid the foundation of which field?",
+    "answers": [
+      { "id": "0", "text": "Select..." },
+      { "id": "1", "text": "Quantum Mechanics" },
+      { "id": "2", "text": "Classical Mechanics" },
+      { "id": "3", "text": "String Theory" }
+    ]
+  },
+  {
+    "id": 5,
+    "type": "truefalse",
+    "title": "True / False",
+    "text": "An object at rest will stay at rest unless an unbalanced force acts upon it.",
+    "answers": [
+      { "id": "T", "text": "True" },
+      { "id": "F", "text": "False" }
+    ]
+  }
+]

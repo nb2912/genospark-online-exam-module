@@ -1,133 +1,140 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import Header from './components/Header';
-import MainContent from './components/MainContent';
-import Footer from './components/Footer';
-import ReviewScreen from './components/ReviewScreen';
-import { examData } from './lib/mock-data';
-import { Question } from './types/types';
+import React, { useEffect, useState, useRef } from "react";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import QuestionRenderer from "./components/QuestionRenderer";
+import Navigator from "./components/Navigator";
+import HelpModal from "./components/HelpModal";
+import { Question } from "./types/types";
+import questionsData from "./data/questions.json";
 
-export default function Home() {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<number, string>>({});
-  const [flaggedQuestions, setFlaggedQuestions] = useState<number[]>([]);
-  const [showReviewScreen, setShowReviewScreen] = useState(false);
-  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-  const [userName, setUserName] = useState<string>("User");
+export default function Page() {
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [current, setCurrent] = useState(0);
+  const [answers, setAnswers] = useState<Record<number | string, any>>({});
+  const [showNavigator, setShowNavigator] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
 
-  // Fetch user data from login/session
+  // Timer state
+  const DEFAULT_MINUTES = 30;
+  const [remainingSec, setRemainingSec] = useState(DEFAULT_MINUTES * 60);
+  const timerRef = useRef<number | null>(null);
+  const [timeExpired, setTimeExpired] = useState(false);
+
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        // Get user from localStorage (or you can fetch from an API)
-        const storedUser = localStorage.getItem('userName');
-        if (storedUser) {
-          setUserName(storedUser);
-        } else {
-          // Try to fetch from session API if available
-          const response = await fetch('/api/user');
-          if (response.ok) {
-            const data = await response.json();
-            setUserName(data.name || "User");
-          }
-        }
-      } catch (error) {
-        console.log('User data not available');
-      }
-    };
-
-    fetchUserData();
+    setQuestions(questionsData as Question[]);
   }, []);
 
-  const handleNext = () => {
-    if (currentQuestionIndex < examData.questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    } else {
-      setShowReviewScreen(true);
+  useEffect(() => {
+    if (remainingSec <= 0) {
+      setTimeExpired(true);
+      return;
     }
+
+    timerRef.current = window.setInterval(() => {
+      setRemainingSec((prev) => {
+        if (prev <= 1) {
+          if (timerRef.current) {
+            clearInterval(timerRef.current);
+            timerRef.current = null;
+          }
+          setTimeExpired(true);
+          setTimeout(() => alert("Time has expired."), 50);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const formatTime = (sec: number) => {
+    const m = Math.floor(sec / 60).toString().padStart(2, "0");
+    const s = Math.floor(sec % 60).toString().padStart(2, "0");
+    return `${m}:${s}`;
   };
 
-  const handlePrevious = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
-    }
+  const onAnswerSelect = (qid: number | string, value: any) => {
+    setAnswers((prev) => ({ ...prev, [qid]: { ...prev[qid], value } }));
   };
 
-  const handleAnswerSelect = (questionId: number, answerId: string) => {
-    setAnswers({ ...answers, [questionId]: answerId });
+  // <-- FIXED: No separate isMarked state. Toggle flagged only inside answers[qid]
+  const onFlagToggle = () => {
+    const q = questions[current];
+    if (!q) return;
+    const qid = q.id;
+    setAnswers((prev) => ({
+      ...prev,
+      [qid]: { ...prev[qid], flagged: !prev[qid]?.flagged },
+    }));
   };
 
-  const handleFlagQuestion = (questionId: number) => {
-    if (flaggedQuestions.includes(questionId)) {
-      setFlaggedQuestions(flaggedQuestions.filter((id) => id !== questionId));
-    } else {
-      setFlaggedQuestions([...flaggedQuestions, questionId]);
-    }
+  const goNext = () => {
+    if (current < questions.length - 1) setCurrent((c) => c + 1);
+    else alert("Submit (demo): " + JSON.stringify(answers, null, 2));
   };
 
-  const handleQuestionSelect = (questionIndex: number) => {
-    setCurrentQuestionIndex(questionIndex);
-    setShowReviewScreen(false);
-  };
+  const goPrev = () => setCurrent((c) => Math.max(0, c - 1));
 
-  const handleEndReview = () => {
-    setShowConfirmationModal(true);
-  };
-
-  const handleConfirmEndExam = () => {
-    // Handle exam submission logic here
-    alert('Exam submitted successfully!');
-  };
-
-  const currentQuestion = examData.questions[currentQuestionIndex];
+  useEffect(() => {
+    if (questions.length > 0 && current >= questions.length) setCurrent(questions.length - 1);
+  }, [questions, current]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <Header userName={userName} />
-      <main className="grow">
-        {showReviewScreen ? (
-          <ReviewScreen
-            questions={examData.questions}
-            answers={answers}
-            flaggedQuestions={flaggedQuestions}
-            onQuestionSelect={handleQuestionSelect}
-            onEndReview={handleEndReview}
-          />
+    <>
+      <Header
+        userName="First Name Last Name"
+        timeRemaining={formatTime(remainingSec)}
+        current={questions.length ? current + 1 : 0}
+        total={questions.length}
+        // pass per-question flag only
+        isMarked={!!answers[questions[current]?.id]?.flagged}
+        onToggleMark={onFlagToggle}
+        timeExpired={timeExpired}
+      />
+
+      <main className="max-w-[1150px] mx-auto px-4 pt-[86px] pb-32">
+        {questions.length === 0 ? (
+          <div className="text-center py-24">Loading questions...</div>
         ) : (
-          <MainContent
-            question={currentQuestion}
-            onAnswerSelect={handleAnswerSelect}
-            selectedAnswer={answers[currentQuestion.id]}
+          <QuestionRenderer
+            question={questions[current]}
+            selectedAnswer={answers[questions[current].id]?.value}
+            onAnswerSelect={onAnswerSelect}
           />
         )}
       </main>
-      {!showReviewScreen && (
-        <Footer
-          onNext={handleNext}
-          onPrevious={handlePrevious}
-          onFlag={() => handleFlagQuestion(currentQuestion.id)}
-          isFirstQuestion={currentQuestionIndex === 0}
-          isLastQuestion={currentQuestionIndex === examData.questions.length - 1}
-          isFlagged={flaggedQuestions.includes(currentQuestion.id)}
+
+      <Footer
+        onHelp={() => setShowHelp(true)}
+        onNavigator={() => setShowNavigator(true)}
+        onPrevious={goPrev}
+        onNext={goNext}
+        isFirstQuestion={current === 0}
+      />
+
+      {showNavigator && (
+        <Navigator
+          questions={questions}
+          answers={answers}
+          current={current}
+          onClose={() => setShowNavigator(false)}
+          onGoto={(i) => {
+            setCurrent(i);
+            setShowNavigator(false);
+          }}
         />
       )}
-      {showConfirmationModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-8 rounded-lg shadow-2xl max-w-md">
-            <h2 className="text-2xl font-bold mb-4 text-blue-900">Confirm Submission</h2>
-            <p className="text-gray-700 mb-6">You have selected to end the exam. Are you sure you wish to submit your answers and exit the exam?</p>
-            <div className="flex justify-end gap-4">
-              <button onClick={() => setShowConfirmationModal(false)} className="bg-slate-500 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded transition-colors">
-                No, Return to Review
-              </button>
-              <button onClick={handleConfirmEndExam} className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors">
-                Yes, End Exam
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+
+      {showHelp && <HelpModal onClose={() => setShowHelp(false)} />}
+    </>
   );
 }
