@@ -4,43 +4,91 @@
     "type": "single",
     "title": "Multiple Choice Item - Single Select",
     "text": "What colour is the sky on a clear day?",
-    "image": "/images/sky.jpg",
+    "image": "/random.jpg",
     "answers": [
-      { "id": "A", "text": "Blue" },
-      { "id": "B", "text": "Green" },
-      { "id": "C", "text": "Purple" },
-      { "id": "D", "text": "Yellow" }
+      {
+        "id": "A",
+        "text": "Blue"
+      },
+      {
+        "id": "B",
+        "text": "Green"
+      },
+      {
+        "id": "C",
+        "text": "Purple"
+      },
+      {
+        "id": "D",
+        "text": "Yellow"
+      }
     ]
   },
   {
     "id": 2,
     "type": "multiple",
     "title": "Multiple Choice Item - Multiple Select",
-    "text": "Which of these elements are considered metals? (Select three)",
+    "text": "Which of these elements are considered a metal by the Periodic Table?<br><br>Please select <b>three</b> options only.",
     "answers": [
-      { "id": "A", "text": "Gold" },
-      { "id": "B", "text": "Hydrogen" },
-      { "id": "C", "text": "Magnesium" },
-      { "id": "D", "text": "Potassium" },
-      { "id": "E", "text": "Xenon" }
+      {
+        "id": "A",
+        "text": "Gold",
+        "image": "/random.jpg"
+      },
+      {
+        "id": "B",
+        "text": "Hydrogen",
+        "image": "/random.jpg"
+      },
+      {
+        "id": "C",
+        "text": "Magnesium",
+        "image": "/random.jpg"
+      },
+      {
+        "id": "D",
+        "text": "Potassium",
+        "image": "/random.jpg"
+      },
+      {
+        "id": "E",
+        "text": "Xenon",
+        "image": "/random.jpg"
+      }
     ]
   },
   {
     "id": 3,
     "type": "short",
-    "title": "Short Response Item",
-    "text": "What is the sum of £10.00 and £3.00?"
+    "title": "Short Response Item (Fill-in-the-blank)",
+    "text": "What is the sum of £10.00 and £3.00?",
+    "meta": {
+      "longText": "<b>String Input</b><br>This input type is designed to accept alphanumeric characters (A–Z, 0–9, punctuation, etc.). Enter your answer below in <b>pounds and pence</b>.<br><br><b>Decimal Input</b><br>Enter your answer below as a decimal <b>without</b> the pound (£) sign. Your answer must be to two decimal places.<br><br><b>Integer Input</b><br>Enter your answer as a whole number only without the pound (£) sign. Your response must be between 0 and 20."
+    }
   },
   {
     "id": 4,
     "type": "dropdown",
     "title": "Dropdown Item",
-    "text": "Newton's Principia laid the foundation of which field?",
+    "text": "In the <i>Philosophiae Naturalis Principia Mathematica</i> (Latin for \"Mathematical Principles of Natural Philosophy\"), Isaac Newton laid out his laws of motion.<br><br>What did this document form the foundations of?",
+    "image": "/random.jpg",
     "answers": [
-      { "id": "0", "text": "Select..." },
-      { "id": "1", "text": "Quantum Mechanics" },
-      { "id": "2", "text": "Classical Mechanics" },
-      { "id": "3", "text": "String Theory" }
+      {
+        "id": "",
+        "text": "Select..."
+      },
+      {
+        "id": "1",
+        "text": "The Grand Unified Theory"
+      },
+      {
+        "id": "2",
+        "text": "Quantum Mechanics"
+      },
+      {
+        "id": "3",
+        "text": "Classical Mechanics"
+      }
     ]
   },
   {
@@ -49,8 +97,14 @@
     "title": "True / False",
     "text": "An object at rest will stay at rest unless an unbalanced force acts upon it.",
     "answers": [
-      { "id": "T", "text": "True" },
-      { "id": "F", "text": "False" }
+      {
+        "id": "T",
+        "text": "True"
+      },
+      {
+        "id": "F",
+        "text": "False"
+      }
     ]
   }
 ]

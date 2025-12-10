@@ -101,7 +101,7 @@ export default function Page() {
         timeExpired={timeExpired}
       />
 
-      <main className="max-w-[1150px] mx-auto px-4 pt-[86px] pb-32">
+      <main className="w-full pt-[86px] pb-32">
         {questions.length === 0 ? (
           <div className="text-center py-24">Loading questions...</div>
         ) : (
